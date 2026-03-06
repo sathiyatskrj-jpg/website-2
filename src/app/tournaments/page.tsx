@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Download, Users, MapPin, IndianRupee, Trophy, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function TournamentsPage() {
   const tournaments = [
@@ -41,11 +44,29 @@ export default function TournamentsPage() {
       <section className="bg-primary text-primary-foreground py-16 bg-chess-pattern relative">
         <div className="absolute inset-0 bg-primary/95"></div>
         <div className="container relative mx-auto px-4 text-center">
-          <Trophy className="h-12 w-12 text-secondary mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-black font-poppins mb-4">Tournaments</h1>
-          <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, type: "spring" }}
+          >
+            <Trophy className="h-12 w-12 text-secondary mx-auto mb-4" />
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-4xl md:text-5xl font-black font-poppins mb-4"
+          >
+            Tournaments
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg text-primary-foreground/80 max-w-2xl mx-auto"
+          >
             Register for upcoming chess championships, view tournament brochures, and check details of ongoing state and district level events.
-          </p>
+          </motion.p>
         </div>
       </section>
 
@@ -62,9 +83,21 @@ export default function TournamentsPage() {
       {/* Tournament List */}
       <section className="py-12 bg-background flex-1">
         <div className="container mx-auto px-4">
-          <div className="space-y-6 max-w-5xl mx-auto">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: { transition: { staggerChildren: 0.15 } },
+              hidden: {}
+            }}
+            className="space-y-6 max-w-5xl mx-auto"
+          >
             {tournaments.map((tournament) => (
-              <div key={tournament.id} className="bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col md:flex-row">
+              <motion.div 
+                key={tournament.id} 
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                className="bg-card border border-border rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col md:flex-row"
+              >
                 {/* Left details */}
                 <div className="p-6 md:p-8 flex-1">
                   <div className="flex items-center gap-3 mb-3">
@@ -76,7 +109,7 @@ export default function TournamentsPage() {
                       <Users className="h-4 w-4" /> {tournament.categories}
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold font-poppins mb-4 text-foreground">{tournament.name}</h2>
+                  <h2 className="text-2xl font-bold font-poppins mb-4 text-foreground group-hover:text-primary transition-colors">{tournament.name}</h2>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground mb-6">
                     <div className="flex items-start gap-2">
@@ -99,30 +132,33 @@ export default function TournamentsPage() {
                 </div>
 
                 {/* Right actions */}
-                <div className="bg-muted p-6 md:p-8 flex flex-col justify-center gap-4 md:w-64 border-t md:border-t-0 md:border-l border-border">
+                <div className="bg-muted p-6 md:p-8 flex flex-col justify-center gap-4 md:w-64 border-t md:border-t-0 md:border-l border-border relative overflow-hidden group">
+                  {/* Subtle background glow on hover */}
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  
                   {tournament.status === 'Upcoming' ? (
-                    <>
-                      <Link href={`/tournaments/${tournament.id}/register`} className="w-full py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 transition-colors text-center shadow-sm">
+                    <div className="relative z-10 space-y-4 w-full">
+                      <Link href={`/tournaments/${tournament.id}/register`} className="w-full block py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 hover:scale-[1.02] transition-all text-center shadow-sm">
                         Register Offline/Online
                       </Link>
-                      <button className="w-full py-3 bg-background border border-border hover:border-primary text-foreground font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                      <button className="w-full py-3 bg-background border border-border hover:border-primary text-foreground font-medium rounded-lg transition-colors flex items-center justify-center gap-2 hover:bg-muted/50">
                         <Download className="h-4 w-4" /> Brochure
                       </button>
-                    </>
+                    </div>
                   ) : (
-                    <>
+                    <div className="relative z-10 space-y-4 w-full">
                       <button className="w-full py-3 bg-background border border-border text-muted-foreground font-medium rounded-lg cursor-not-allowed">
                         Registration Closed
                       </button>
-                      <button className="w-full py-3 bg-secondary/10 text-secondary font-medium rounded-lg transition-colors hover:bg-secondary/20">
+                      <button className="w-full py-3 bg-secondary/10 text-secondary font-medium rounded-lg transition-colors hover:bg-secondary/20 hover:scale-[1.02]">
                         View Results
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
