@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Menu, Crown } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function Navbar() {
   return (
@@ -21,6 +22,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Link href="/tournaments" className="hidden md:inline-flex items-center justify-center rounded-md bg-secondary text-secondary-foreground h-9 px-4 py-2 font-medium transition-colors hover:bg-secondary/90">
             Register Now
           </Link>
