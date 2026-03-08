@@ -6,6 +6,7 @@ import * as THREE from "three";
 
 // @ts-ignore - Vanta doesn't have official types
 import WAVES from "vanta/dist/vanta.waves.min";
+// @ts-ignore - Vanta doesn't have official types
 import NET from "vanta/dist/vanta.net.min";
 
 interface VantaBackgroundProps {
