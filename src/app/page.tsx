@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { NewsTicker } from "@/components/NewsTicker";
-import { HeroCarousel } from "@/components/HeroCarousel";
+// HeroCarousel uses @react-three/fiber + vanta.js which crash during SSR prerender
+const HeroCarousel = dynamic(
+  () => import("@/components/HeroCarousel").then((m) => ({ default: m.HeroCarousel })),
+  { ssr: false, loading: () => <div className="w-full h-[380px] md:h-[500px] lg:h-[620px] bg-[#0f172a]" /> }
+);
 import { ScrollReveal } from "@/components/animations/AnimationUtils";
 import { HoverCard } from "@/components/animations/MicroAnimations";
 import { GSAPReveal, GSAPStagger, GSAPCounter } from "@/components/animations/GSAPAnimations";
