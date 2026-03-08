@@ -2,21 +2,32 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import {
+  Trophy, Users, Calendar, Download, FileText,
+  ChevronRight, Star, Mail, MapPin
+} from "lucide-react";
 import { NewsTicker } from "@/components/NewsTicker";
 // HeroCarousel uses @react-three/fiber + vanta.js which crash during SSR prerender
 const HeroCarousel = dynamic(
   () => import("@/components/HeroCarousel").then((m) => ({ default: m.HeroCarousel })),
   { ssr: false, loading: () => <div className="w-full h-[380px] md:h-[500px] lg:h-[620px] bg-[#0f172a]" /> }
 );
-import { ScrollReveal } from "@/components/animations/AnimationUtils";
-import { HoverCard } from "@/components/animations/MicroAnimations";
+const ScrollReveal = dynamic(
+  () => import("@/components/animations/AnimationUtils").then((m) => ({ default: m.ScrollReveal })),
+  { ssr: false }
+);
+
+const HoverCard = dynamic(
+  () => import("@/components/animations/MicroAnimations").then((m) => ({ default: m.HoverCard })),
+  { ssr: false }
+);
+
+const AnimeTextReveal = dynamic(
+  () => import("@/components/animations/AnimeTextReveal").then((m) => ({ default: m.AnimeTextReveal })),
+  { ssr: false }
+);
 import { GSAPReveal, GSAPStagger, GSAPCounter } from "@/components/animations/GSAPAnimations";
 import { ChessPuzzleDisplay } from "@/components/games/MiniChessBoard";
-import { AnimeTextReveal } from "@/components/animations/AnimeTextReveal";
-import {
-  Trophy, Users, Calendar, Download, FileText,
-  ChevronRight, Star, Mail, MapPin
-} from "lucide-react";
 
 // (Skipping unchanging top constants ... keeping original constants intact)
 
