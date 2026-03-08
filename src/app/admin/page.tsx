@@ -1,13 +1,23 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, FileText, Download } from "lucide-react";
 
-export const metadata = {
-  title: "Admin Dashboard | Andaman & Nicobar Chess Association",
-};
+export default function AdminDashboard() {
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminDashboard() {
-  const supabase = await createClient();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email ?? null);
+      }
+    };
+    fetchUser();
+  }, [supabase]);
 
   // We could fetch real counts here later
   const stats = [
@@ -17,14 +27,12 @@ export default async function AdminDashboard() {
     { name: "Downloads", value: "8", icon: Download, color: "text-purple-500", bg: "bg-purple-500/10" },
   ];
 
-  const { data: { user } } = await supabase.auth.getUser();
-
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          Welcome back, {user?.email}. Here is what's happening today.
+          Welcome back{userEmail ? `, ${userEmail}` : ""}. Here is what's happening today.
         </p>
       </div>
 

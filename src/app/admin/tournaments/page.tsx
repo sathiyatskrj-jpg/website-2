@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2, Globe, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,18 +24,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
-export const metadata = {
-  title: "Manage Tournaments | ANCA Admin",
-};
+export default function AdminTournamentsPage() {
+  const [tournaments, setTournaments] = useState<any[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminTournamentsPage() {
-  const supabase = await createClient();
+  useEffect(() => {
+    const fetchTournaments = async () => {
+      const { data, error } = await supabase
+        .from("tournaments")
+        .select("*")
+        .order("start_date", { ascending: false });
 
-  // Fetch tournaments from Supabase
-  const { data: tournaments, error } = await supabase
-    .from("tournaments")
-    .select("*")
-    .order("start_date", { ascending: false });
+      if (error) {
+        setError(error);
+      } else {
+        setTournaments(data);
+      }
+      setLoading(false);
+    };
+
+    fetchTournaments();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -73,7 +87,13 @@ export default async function AdminTournamentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tournaments && tournaments.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  Loading tournaments...
+                </TableCell>
+              </TableRow>
+            ) : tournaments && tournaments.length > 0 ? (
               tournaments.map((tournament) => {
                  const isUpcoming = new Date(tournament.start_date) > new Date();
                  const isOngoing = new Date(tournament.start_date) <= new Date() && new Date(tournament.end_date) >= new Date();

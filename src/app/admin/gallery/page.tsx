@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Plus, Search, MoreHorizontal, Trash2, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,18 +25,29 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Image from "next/image";
 
-export const metadata = {
-  title: "Manage Gallery | ANCA Admin",
-};
+export default function AdminGalleryPage() {
+  const [gallery, setGallery] = useState<any[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminGalleryPage() {
-  const supabase = await createClient();
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const { data, error } = await supabase
+        .from("gallery")
+        .select("*")
+        .order("date", { ascending: false });
 
-  // Fetch gallery images from Supabase
-  const { data: gallery, error } = await supabase
-    .from("gallery")
-    .select("*")
-    .order("date", { ascending: false });
+      if (error) {
+        setError(error);
+      } else {
+        setGallery(data);
+      }
+      setLoading(false);
+    };
+
+    fetchGallery();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -72,7 +86,13 @@ export default async function AdminGalleryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {gallery && gallery.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                  Loading gallery...
+                </TableCell>
+              </TableRow>
+            ) : gallery && gallery.length > 0 ? (
               gallery.map((img) => (
                   <TableRow key={img.id} className="border-border">
                     <TableCell>

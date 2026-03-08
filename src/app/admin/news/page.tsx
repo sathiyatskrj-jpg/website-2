@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,18 +23,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 
-export const metadata = {
-  title: "Manage News | ANCA Admin",
-};
+export default function AdminNewsPage() {
+  const [news, setNews] = useState<any[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminNewsPage() {
-  const supabase = await createClient();
+  useEffect(() => {
+    const fetchNews = async () => {
+      const { data, error } = await supabase
+        .from("news")
+        .select("*")
+        .order("published_date", { ascending: false });
 
-  // Fetch news from Supabase
-  const { data: news, error } = await supabase
-    .from("news")
-    .select("*")
-    .order("published_date", { ascending: false });
+      if (error) {
+        setError(error);
+      } else {
+        setNews(data);
+      }
+      setLoading(false);
+    };
+
+    fetchNews();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -70,7 +84,13 @@ export default async function AdminNewsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {news && news.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                  Loading news...
+                </TableCell>
+              </TableRow>
+            ) : news && news.length > 0 ? (
               news.map((item) => (
                   <TableRow key={item.id} className="border-border">
                     <TableCell className="font-medium max-w-[300px] truncate">{item.title}</TableCell>

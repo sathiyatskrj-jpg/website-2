@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2, DownloadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,18 +24,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
-export const metadata = {
-  title: "Manage Downloads | ANCA Admin",
-};
+export default function AdminDownloadsPage() {
+  const [downloads, setDownloads] = useState<any[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminDownloadsPage() {
-  const supabase = await createClient();
+  useEffect(() => {
+    const fetchDownloads = async () => {
+      const { data, error } = await supabase
+        .from("downloads")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
 
-  // Fetch downloads from Supabase
-  const { data: downloads, error } = await supabase
-    .from("downloads")
-    .select("*")
-    .order("uploaded_at", { ascending: false });
+      if (error) {
+        setError(error);
+      } else {
+        setDownloads(data);
+      }
+      setLoading(false);
+    };
+
+    fetchDownloads();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -71,7 +85,13 @@ export default async function AdminDownloadsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {downloads && downloads.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                  Loading downloads...
+                </TableCell>
+              </TableRow>
+            ) : downloads && downloads.length > 0 ? (
               downloads.map((doc) => (
                   <TableRow key={doc.id} className="border-border">
                     <TableCell className="font-medium max-w-[300px] truncate flex items-center gap-2">

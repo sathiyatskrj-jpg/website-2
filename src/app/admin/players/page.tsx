@@ -1,4 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Plus, Search, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,18 +23,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
-export const metadata = {
-  title: "Manage Players | ANCA Admin",
-};
+export default function AdminPlayersPage() {
+  const [players, setPlayers] = useState<any[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseBrowserClient();
 
-export default async function AdminPlayersPage() {
-  const supabase = await createClient();
-
-  // Fetch players from Supabase
-  const { data: players, error } = await supabase
-    .from("players")
-    .select("*")
-    .order("rating", { ascending: false });
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      const { data, error } = await supabase
+        .from("players")
+        .select("*")
+        .order("rating", { ascending: false });
+      
+      if (error) {
+        setError(error);
+      } else {
+        setPlayers(data);
+      }
+      setLoading(false);
+    };
+    
+    fetchPlayers();
+  }, [supabase]);
 
   return (
     <div className="space-y-6">
@@ -72,7 +86,13 @@ export default async function AdminPlayersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {players && players.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  Loading players...
+                </TableCell>
+              </TableRow>
+            ) : players && players.length > 0 ? (
               players.map((player) => (
                 <TableRow key={player.id} className="border-border">
                   <TableCell className="font-medium">{player.name}</TableCell>
