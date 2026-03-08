@@ -21,18 +21,7 @@ export const metadata: Metadata = {
   description: "Official portal of the Andaman and Nicobar Chess Association (ANCA)",
 };
 
-import dynamic from "next/dynamic";
-
-const PageTransition = dynamic(
-  () => import("@/components/animations/PageTransition").then((m) => ({ default: m.PageTransition })),
-  { ssr: false }
-);
-
-// ScrollAnimationWebGL uses Three.js WebGLRenderer — must be client-only
-const ScrollAnimationWebGL = dynamic(
-  () => import("@/components/animations/ScrollAnimationWebGL").then((m) => ({ default: m.ScrollAnimationWebGL })),
-  { ssr: false }
-);
+import { PageTransition, ScrollAnimationWebGL } from "@/components/layout/DynamicWrappers";
 
 export default function RootLayout({
   children,
