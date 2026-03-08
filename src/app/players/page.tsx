@@ -150,7 +150,7 @@ export default function PlayersPage() {
                   {/* Desktop */}
                   <div className="hidden md:block md:col-span-1 text-muted-foreground font-semibold text-sm">#{rank}</div>
                   <div className="hidden md:block md:col-span-4">
-                    <Link href={`/players/${p.id}`} className="font-bold text-foreground hover:text-primary transition-colors">{p.name}</Link>
+                    <Link href={`/players/profile?id=${p.id}`} className="font-bold text-foreground hover:text-primary transition-colors">{p.name}</Link>
                   </div>
                   <div className="hidden md:flex md:col-span-1 justify-center">
                     {p.title ? (

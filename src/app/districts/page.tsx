@@ -255,7 +255,7 @@ export default function DistrictDashboardsPage() {
                                             {stat.topPlayers.map((player, pIdx) => (
                                                 <Link 
                                                     key={player.id} 
-                                                    href={`/players/${player.id}`}
+                                                    href={`/players/profile?id=${player.id}`}
                                                     className="flex items-center justify-between p-3 border-b border-border last:border-0 hover:bg-muted transition-colors"
                                                 >
                                                     <div className="flex items-center gap-3">

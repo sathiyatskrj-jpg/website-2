@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Trophy, Users, MapPin, Calendar, Award, ChevronLeft, Download, Share2 } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -30,9 +31,9 @@ const TITLE_COLORS: Record<string, string> = {
   WCM: "bg-orange-100 text-orange-800 border-orange-200",
 };
 
-export default function PlayerProfilePage() {
-  const params = useParams();
-  const id = params.id as string;
+function PlayerProfileContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   
   const [player, setPlayer] = useState<Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -208,5 +209,18 @@ export default function PlayerProfilePage() {
             </div>
         </section>
     </div>
+  );
+}
+
+export default function PlayerProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+        <p className="text-muted-foreground animate-pulse">Loading player profile...</p>
+      </div>
+    }>
+      <PlayerProfileContent />
+    </Suspense>
   );
 }
