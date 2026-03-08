@@ -5,7 +5,7 @@ import { cn } from "@/components/ui/button"
 
 const DropdownMenu = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = React.useState(false)
-  const ref = React.useRef<div className="relative inline-block text-left" ref={ref}>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
