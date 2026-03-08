@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   description: "Official portal of the Andaman and Nicobar Chess Association (ANCA)",
 };
 
+import { PageTransition } from "@/components/animations/PageTransition";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,7 +42,9 @@ export default function RootLayout({
           <div id="main-content" className="flex flex-col min-h-screen relative">
             <Header />
             <main className="flex-1 w-full flex flex-col items-center">
-              {children}
+              <PageTransition>
+                {children}
+              </PageTransition>
             </main>
             <Footer />
           </div>
