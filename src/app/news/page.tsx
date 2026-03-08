@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Calendar, FileText, Download, ChevronRight, Newspaper } from 'lucide-react';
-import { createBrowserClient } from '@/lib/supabase/client';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { format, parseISO } from 'date-fns';
 
 interface NewsItem {
@@ -22,7 +22,7 @@ export default function NewsPage() {
 
   useEffect(() => {
     async function fetchNews() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data } = await supabase
         .from("news")
         .select("*")

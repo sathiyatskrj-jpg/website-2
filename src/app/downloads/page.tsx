@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Download, FileText, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { format, parseISO } from "date-fns";
 
 interface DownloadItem {
@@ -20,7 +20,7 @@ export default function DownloadsPage() {
 
   useEffect(() => {
     async function fetchDocs() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data } = await supabase
         .from("downloads")
         .select("*")

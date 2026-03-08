@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Search, Trophy, Users, ChevronRight } from "lucide-react";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface Player {
   id: string;
@@ -34,7 +34,7 @@ export default function PlayersPage() {
 
   useEffect(() => {
     async function fetchPlayers() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("players")
         .select("id, name, fide_id, rating, district, title")

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, MapPin, Users, Award, BarChart3, Trophy, ChevronDown } from "lucide-react";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface Player {
   id: string;
@@ -29,7 +29,7 @@ export default function DistrictDashboardsPage() {
 
   useEffect(() => {
     async function fetchAndCalculateStats() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data: players } = await supabase
         .from("players")
         .select("id, name, rating, district, title")

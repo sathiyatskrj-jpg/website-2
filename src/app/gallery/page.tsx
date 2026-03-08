@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Image as ImageIcon } from "lucide-react";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { format, parseISO } from "date-fns";
 
 interface GalleryItem {
@@ -19,7 +19,7 @@ export default function GalleryPage() {
 
   useEffect(() => {
     async function fetchGallery() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data } = await supabase
         .from("gallery")
         .select("*")

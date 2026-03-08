@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Download, Users, MapPin, IndianRupee, Trophy, Calendar, ChevronRight } from "lucide-react";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { format, isBefore, isAfter, parseISO } from "date-fns";
 
 interface Tournament {
@@ -31,7 +31,7 @@ export default function TournamentsPage() {
 
   useEffect(() => {
     async function fetchTournaments() {
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data } = await supabase
         .from("tournaments")
         .select("*")

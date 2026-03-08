@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 // @ts-ignore - module installed via CI
-import anime from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 import { useInView } from 'framer-motion';
 
 interface AnimeTextProps {

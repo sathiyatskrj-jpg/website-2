@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Trophy, Users, MapPin, Calendar, Award, ChevronLeft, Download, Share2 } from "lucide-react";
-import { createBrowserClient } from "@/lib/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface Player {
   id: string;
@@ -41,7 +41,7 @@ export default function PlayerProfilePage() {
     async function fetchPlayer() {
       if (!id) return;
       
-      const supabase = createBrowserClient();
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("players")
         .select("*")
