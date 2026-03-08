@@ -5,10 +5,13 @@ import { ScrollReveal } from "@/components/animations/AnimationUtils";
 import { HoverCard } from "@/components/animations/MicroAnimations";
 import { GSAPReveal, GSAPStagger, GSAPCounter } from "@/components/animations/GSAPAnimations";
 import { ChessPuzzleDisplay } from "@/components/games/MiniChessBoard";
+import { AnimeTextReveal } from "@/components/animations/AnimeTextReveal";
 import {
   Trophy, Users, Calendar, Download, FileText,
   ChevronRight, Star, Mail, MapPin
 } from "lucide-react";
+
+// (Skipping unchanging top constants ... keeping original constants intact)
 
 const stats = [
   { label: "Registered Players", value: 1200, suffix: "+", icon: Users },
@@ -82,7 +85,7 @@ export default function HomePage() {
               <GSAPReveal from="left" className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-5 w-1 bg-secondary rounded-full"></div>
-                  <h2 className="text-xl font-poppins font-bold text-primary uppercase tracking-wider">Latest Announcements</h2>
+                  <AnimeTextReveal text="Latest Announcements" className="text-xl font-poppins font-bold text-primary uppercase tracking-wider" />
                 </div>
                 <Link href="/news" className="text-sm text-primary font-semibold flex items-center gap-1 hover:gap-2 transition-all">
                   View All <ChevronRight className="h-4 w-4" />
@@ -115,7 +118,7 @@ export default function HomePage() {
               <GSAPReveal from="left" className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-5 w-1 bg-secondary rounded-full"></div>
-                  <h2 className="text-xl font-poppins font-bold text-primary uppercase tracking-wider">Upcoming Tournaments</h2>
+                  <AnimeTextReveal text="Upcoming Tournaments" className="text-xl font-poppins font-bold text-primary uppercase tracking-wider" />
                 </div>
                 <Link href="/tournaments" className="text-sm text-primary font-semibold flex items-center gap-1 hover:gap-2 transition-all">
                   Full Calendar <ChevronRight className="h-4 w-4" />
@@ -138,7 +141,7 @@ export default function HomePage() {
             <GSAPReveal from="bottom" delay={0.1}>
               <div className="bg-primary rounded-md p-6 md:p-8 text-primary-foreground relative overflow-hidden shadow-lg">
                 <div className="absolute right-0 top-0 text-[160px] leading-none font-black opacity-5 select-none pointer-events-none font-poppins">♛</div>
-                <h2 className="text-2xl font-bold font-poppins mb-2">About ANCA</h2>
+                <AnimeTextReveal text="About ANCA" className="text-2xl font-bold font-poppins mb-2" delay={400} />
                 <p className="text-primary-foreground/80 text-sm leading-relaxed mb-4 max-w-2xl">
                   The Andaman &amp; Nicobar Chess Association (ANCA) is the official governing body affiliated to AICF and FIDE,
                   promoting chess across all islands since 2005 through tournaments, training, and talent development.
