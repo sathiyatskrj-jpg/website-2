@@ -22,8 +22,13 @@ export const metadata: Metadata = {
 };
 
 import { PageTransition } from "@/components/animations/PageTransition";
+import dynamic from "next/dynamic";
 
-import { ScrollAnimationWebGL } from "@/components/animations/ScrollAnimationWebGL";
+// ScrollAnimationWebGL uses Three.js WebGLRenderer — must be client-only
+const ScrollAnimationWebGL = dynamic(
+  () => import("@/components/animations/ScrollAnimationWebGL").then((m) => ({ default: m.ScrollAnimationWebGL })),
+  { ssr: false }
+);
 
 export default function RootLayout({
   children,
