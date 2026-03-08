@@ -1,19 +1,49 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ChevronRight, Image as ImageIcon } from "lucide-react";
+import { createBrowserClient } from "@/lib/supabase/client";
+import { format, parseISO } from "date-fns";
+
+interface GalleryItem {
+  id: string;
+  album: string;
+  image_url: string;
+  date: string | null;
+}
+
 export default function GalleryPage() {
-  const images = [
-    "https://images.unsplash.com/photo-1529699211952-734e80c4d44b?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1560174038-da43ac74f01b?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1610817088194-e9ed9591e3e7?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1534067341014-2c0615962f3c?auto=format&fit=crop&q=80",
-  ];
+  const [images, setImages] = useState<GalleryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchGallery() {
+      const supabase = createBrowserClient();
+      const { data } = await supabase
+        .from("gallery")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (data) setImages(data);
+      setIsLoading(false);
+    }
+    fetchGallery();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
       <section className="bg-primary text-primary-foreground py-16 bg-chess-pattern relative">
         <div className="absolute inset-0 bg-primary/95"></div>
         <div className="container relative mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-black font-poppins mb-4">Photo Gallery</h1>
+          <div className="flex justify-center items-center gap-2 text-sm text-primary-foreground/70 mb-3">
+            <Link href="/" className="hover:underline">Home</Link>
+            <ChevronRight className="h-4 w-4" />
+            <span>Photo Gallery</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black font-poppins mb-4 flex items-center justify-center gap-3">
+            <ImageIcon className="h-10 w-10 text-secondary" /> Photo Gallery
+          </h1>
           <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto">
             Memories from our state championships, award ceremonies, and coaching camps.
           </p>
@@ -22,17 +52,37 @@ export default function GalleryPage() {
 
       <section className="py-12 bg-background flex-1">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {images.map((src, i) => (
-              <div key={i} className="group relative aspect-video bg-muted rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt={`Gallery Image ${i+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white font-medium border border-white/50 px-4 py-2 rounded-lg backdrop-blur-sm">View</span>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-48">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : images.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground bg-card border border-border rounded-xl">
+              No photos have been uploaded to the gallery yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {images.map((img) => (
+                <div key={img.id} className="group flex flex-col bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                  <div className="relative aspect-square w-full bg-muted cursor-pointer overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img.image_url} alt={img.album} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <a href={img.image_url} target="_blank" rel="noopener noreferrer" className="text-white font-medium border border-white/50 px-4 py-2 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors">
+                        View Full
+                      </a>
+                    </div>
+                  </div>
+                  <div className="p-4 border-t border-border">
+                    <h3 className="font-bold text-foreground text-sm truncate">{img.album}</h3>
+                    {img.date && (
+                        <p className="text-xs text-muted-foreground mt-1">{format(parseISO(img.date), "dd MMM yyyy")}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
