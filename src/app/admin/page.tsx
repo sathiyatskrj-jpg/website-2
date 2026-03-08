@@ -7,17 +7,17 @@ import { Users, Trophy, FileText, Download } from "lucide-react";
 
 export default function AdminDashboard() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchUser = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserEmail(user.email ?? null);
       }
     };
     fetchUser();
-  }, [supabase]);
+  }, []);
 
   // We could fetch real counts here later
   const stats = [

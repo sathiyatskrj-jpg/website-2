@@ -29,10 +29,10 @@ export default function AdminGalleryPage() {
   const [gallery, setGallery] = useState<any[] | null>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchGallery = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("gallery")
         .select("*")
@@ -47,7 +47,7 @@ export default function AdminGalleryPage() {
     };
 
     fetchGallery();
-  }, [supabase]);
+  }, []);
 
   return (
     <div className="space-y-6">

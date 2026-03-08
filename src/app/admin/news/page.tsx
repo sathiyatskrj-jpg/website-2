@@ -27,10 +27,10 @@ export default function AdminNewsPage() {
   const [news, setNews] = useState<any[] | null>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchNews = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("news")
         .select("*")
@@ -45,7 +45,7 @@ export default function AdminNewsPage() {
     };
 
     fetchNews();
-  }, [supabase]);
+  }, []);
 
   return (
     <div className="space-y-6">

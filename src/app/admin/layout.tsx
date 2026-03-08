@@ -24,7 +24,6 @@ export default function AdminLayout({
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     // Basic auth guard: Only check if not on login page
@@ -34,6 +33,7 @@ export default function AdminLayout({
     }
 
     const checkUser = async () => {
+      const supabase = getSupabaseBrowserClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -46,9 +46,10 @@ export default function AdminLayout({
       }
     };
     checkUser();
-  }, [router, supabase, pathname]);
+  }, [router, pathname]);
 
   const handleSignOut = async () => {
+    const supabase = getSupabaseBrowserClient();
     await supabase.auth.signOut();
     router.push("/");
   };

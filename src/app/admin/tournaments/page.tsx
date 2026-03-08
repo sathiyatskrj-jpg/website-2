@@ -28,10 +28,10 @@ export default function AdminTournamentsPage() {
   const [tournaments, setTournaments] = useState<any[] | null>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchTournaments = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("tournaments")
         .select("*")
@@ -46,7 +46,7 @@ export default function AdminTournamentsPage() {
     };
 
     fetchTournaments();
-  }, [supabase]);
+  }, []);
 
   return (
     <div className="space-y-6">

@@ -28,10 +28,10 @@ export default function AdminDownloadsPage() {
   const [downloads, setDownloads] = useState<any[] | null>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchDownloads = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("downloads")
         .select("*")
@@ -46,7 +46,7 @@ export default function AdminDownloadsPage() {
     };
 
     fetchDownloads();
-  }, [supabase]);
+  }, []);
 
   return (
     <div className="space-y-6">

@@ -27,10 +27,10 @@ export default function AdminPlayersPage() {
   const [players, setPlayers] = useState<any[] | null>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchPlayers = async () => {
+      const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from("players")
         .select("*")
@@ -45,7 +45,7 @@ export default function AdminPlayersPage() {
     };
     
     fetchPlayers();
-  }, [supabase]);
+  }, []);
 
   return (
     <div className="space-y-6">
