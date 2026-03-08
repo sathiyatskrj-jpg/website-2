@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Floating3DHero from "@/components/animations/Floating3DHero";
 import VantaBackground from "@/components/animations/VantaBackground";
+import { HeroTypewriter } from "@/components/animations/TypewriterText";
 
 const slides = [
   {
