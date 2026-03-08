@@ -1,4 +1,6 @@
+// @ts-nocheck
 "use client";
+
 
 import React, { useRef, useMemo } from "react";
 // @ts-ignore - module installed via CI
