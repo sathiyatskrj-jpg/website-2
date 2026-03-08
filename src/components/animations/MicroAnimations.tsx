@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
 
 /**
- * Magnetic hover button — the element's position subtly follows the cursor,
- * creating a premium "pull" effect inspired by anime.js target-based animations.
+ * Magnetic hover button — the element's position subtly follows the cursor.
+ * Replaces framer-motion motion.div with native style updates.
  */
 interface MagneticProps {
   children: React.ReactNode;
@@ -15,31 +14,30 @@ interface MagneticProps {
 
 export function Magnetic({ children, className = "", strength = 0.4 }: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY } = e;
     const { left, top, width, height } = ref.current!.getBoundingClientRect();
-    const x = (clientX - left - width / 2) * strength;
-    const y = (clientY - top - height / 2) * strength;
-    setPosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
+    setPos({
+      x: (clientX - left - width / 2) * strength,
+      y: (clientY - top - height / 2) * strength,
+    });
   };
 
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      onMouseLeave={() => setPos({ x: 0, y: 0 })}
       className={className}
+      style={{
+        transform: `translate(${pos.x}px, ${pos.y}px)`,
+        transition: "transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94)",
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -62,7 +60,7 @@ export function AnimatedLink({ children, className = "" }: AnimatedLinkProps) {
 }
 
 /**
- * Hover reveal card — scaling + shadow effect with staggered inner elements.
+ * Hover reveal card — scaling + shadow effect on hover using CSS transitions.
  */
 interface HoverCardProps {
   children: React.ReactNode;
@@ -70,27 +68,54 @@ interface HoverCardProps {
 }
 
 export function HoverCard({ children, className = "" }: HoverCardProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-5%" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.div
+    <div
+      ref={ref}
       className={className}
-      whileHover={{
-        y: -6,
-        scale: 1.02,
-        boxShadow: "0 20px 40px -12px rgba(0,0,0,0.15)",
-        transition: { type: "spring", stiffness: 300, damping: 20 }
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 0.5s ease, transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
       }}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-5%" }}
-      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget;
+        el.style.transform = "translateY(-6px) scale(1.02)";
+        el.style.boxShadow = "0 20px 40px -12px rgba(0,0,0,0.15)";
+        el.style.transition = "transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease";
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget;
+        el.style.transform = "translateY(0) scale(1)";
+        el.style.boxShadow = "";
+        el.style.transition = "transform 0.3s ease, box-shadow 0.3s ease";
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 /**
- * Ripple click effect on buttons — anime.js-inspired burst animation.
+ * Ripple click effect on buttons — CSS-based burst animation.
  */
 export function RippleButton({
   children,
@@ -105,28 +130,20 @@ export function RippleButton({
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { left, top } = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - left;
-    const y = e.clientY - top;
     const id = Date.now();
-    setRipples((prev) => [...prev, { x, y, id }]);
+    setRipples((prev) => [...prev, { x: e.clientX - left, y: e.clientY - top, id }]);
     setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 700);
     onClick?.();
   };
 
   return (
-    <button
-      className={`relative overflow-hidden ${className}`}
-      onClick={handleClick}
-    >
+    <button className={`relative overflow-hidden ${className}`} onClick={handleClick}>
       {children}
       {ripples.map((r) => (
-        <motion.span
+        <span
           key={r.id}
-          className="absolute rounded-full bg-white/30 pointer-events-none"
-          style={{ left: r.x, top: r.y, translateX: "-50%", translateY: "-50%" }}
-          initial={{ width: 0, height: 0, opacity: 0.8 }}
-          animate={{ width: 200, height: 200, opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+          style={{ left: r.x, top: r.y, transform: "translate(-50%,-50%)" }}
         />
       ))}
     </button>
