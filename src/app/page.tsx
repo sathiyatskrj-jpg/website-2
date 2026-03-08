@@ -4,6 +4,7 @@ import { HeroCarousel } from "@/components/HeroCarousel";
 import { ScrollReveal } from "@/components/animations/AnimationUtils";
 import { HoverCard } from "@/components/animations/MicroAnimations";
 import { GSAPReveal, GSAPStagger, GSAPCounter } from "@/components/animations/GSAPAnimations";
+import { ChessPuzzleDisplay } from "@/components/games/MiniChessBoard";
 import {
   Trophy, Users, Calendar, Download, FileText,
   ChevronRight, Star, Mail, MapPin
@@ -221,6 +222,14 @@ export default function HomePage() {
                 </div>
               </div>
             </ScrollReveal>
+
+            {/* Interactive Mini Chess Game */}
+            <GSAPReveal delay={0.6} from="fade">
+              <ChessPuzzleDisplay
+                title="Play Mini Chess"
+                description="Click a piece to select it, then click to move. White moves first!"
+              />
+            </GSAPReveal>
           </div>
         </div>
       </section>
