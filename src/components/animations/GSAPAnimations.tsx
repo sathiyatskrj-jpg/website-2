@@ -2,10 +2,14 @@
 
 import { useEffect, useRef } from "react";
 
+// Minimal GSAP context interface — avoids the broken `import("gsap").Context` type
+interface GSAPCtx {
+  revert: () => void;
+}
+
 /**
  * GSAP ScrollTrigger reveal — animates elements into view on scroll.
- * Uses GSAP dynamically (client-only) to avoid SSR issues.
- * Inspired by GSAP's ScrollTrigger plugin patterns.
+ * All GSAP code is dynamically imported (client-only) to avoid SSR issues.
  */
 interface GSAPRevealProps {
   children: React.ReactNode;
@@ -13,9 +17,6 @@ interface GSAPRevealProps {
   delay?: number;
   from?: "bottom" | "left" | "right" | "fade" | "scale";
   duration?: number;
-  stagger?: number;
-  /** If true, applies GSAP to each direct child element individually */
-  applyToChildren?: boolean;
 }
 
 export function GSAPReveal({
@@ -29,16 +30,11 @@ export function GSAPReveal({
 
   useEffect(() => {
     if (!ref.current) return;
-
-    let gsap: typeof import("gsap").gsap | null = null;
-    let ScrollTrigger: import("gsap/ScrollTrigger").ScrollTrigger | null = null;
-    let ctx: import("gsap").Context | null = null;
+    let ctx: GSAPCtx | null = null;
 
     const init = async () => {
-      const gsapMod = await import("gsap");
-      const stMod = await import("gsap/ScrollTrigger");
-      gsap = gsapMod.gsap;
-      ScrollTrigger = stMod.ScrollTrigger;
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
       const fromVars: Record<string, Record<string, number>> = {
@@ -50,7 +46,7 @@ export function GSAPReveal({
       };
 
       ctx = gsap.context(() => {
-        gsap!.from(ref.current!, {
+        gsap.from(ref.current!, {
           ...fromVars[from],
           duration,
           delay,
@@ -65,10 +61,7 @@ export function GSAPReveal({
     };
 
     init();
-
-    return () => {
-      ctx?.revert();
-    };
+    return () => { ctx?.revert(); };
   }, [delay, from, duration]);
 
   return (
@@ -80,7 +73,6 @@ export function GSAPReveal({
 
 /**
  * GSAP Timeline stagger — staggers direct children on scroll trigger.
- * Mimics anime.js stagger but uses GSAP's powerful timeline API.
  */
 interface GSAPStaggerProps {
   children: React.ReactNode[];
@@ -101,14 +93,12 @@ export function GSAPStagger({
 
   useEffect(() => {
     if (!ref.current) return;
-
-    let ctx: import("gsap").Context | null = null;
+    let ctx: GSAPCtx | null = null;
 
     const init = async () => {
-      const gsapMod = await import("gsap");
-      const stMod = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.gsap;
-      gsap.registerPlugin(stMod.ScrollTrigger);
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
 
       const fromVars: Record<string, Record<string, number>> = {
         bottom: { y: 40, opacity: 0 },
@@ -146,8 +136,7 @@ export function GSAPStagger({
 }
 
 /**
- * GSAP horizontal scroll section — marquee/ticker scroll effect.
- * Great for "sponsors", "gallery", or "partners" strips.
+ * GSAP infinite marquee / horizontal scroll strip.
  */
 interface GSAPMarqueeProps {
   children: React.ReactNode;
@@ -157,17 +146,15 @@ interface GSAPMarqueeProps {
 
 export function GSAPMarquee({ children, className = "", speed = 30 }: GSAPMarqueeProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const animRef = useRef<import("gsap").Tween | null>(null);
 
   useEffect(() => {
     if (!trackRef.current) return;
+    let tween: { kill: () => void } | null = null;
 
     const init = async () => {
       const { gsap } = await import("gsap");
-      const track = trackRef.current!;
-
-      animRef.current = gsap.to(track, {
-        x: `-50%`,
+      tween = gsap.to(trackRef.current!, {
+        x: "-50%",
         duration: speed,
         ease: "none",
         repeat: -1,
@@ -175,7 +162,7 @@ export function GSAPMarquee({ children, className = "", speed = 30 }: GSAPMarque
     };
 
     init();
-    return () => { animRef.current?.kill(); };
+    return () => { tween?.kill(); };
   }, [speed]);
 
   return (
@@ -189,7 +176,7 @@ export function GSAPMarquee({ children, className = "", speed = 30 }: GSAPMarque
 }
 
 /**
- * GSAP number counter — smoother easing than the CSS/RAF version.
+ * GSAP counter — smooth eased number animation triggered on scroll.
  */
 interface GSAPCounterProps {
   to: number;
@@ -199,18 +186,23 @@ interface GSAPCounterProps {
   duration?: number;
 }
 
-export function GSAPCounter({ to, suffix = "", prefix = "", className = "", duration = 2 }: GSAPCounterProps) {
+export function GSAPCounter({
+  to,
+  suffix = "",
+  prefix = "",
+  className = "",
+  duration = 2,
+}: GSAPCounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    let ctx: import("gsap").Context | null = null;
+    let ctx: GSAPCtx | null = null;
 
     const init = async () => {
-      const gsapMod = await import("gsap");
-      const stMod = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.gsap;
-      gsap.registerPlugin(stMod.ScrollTrigger);
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
 
       const obj = { value: 0 };
       ctx = gsap.context(() => {
@@ -221,7 +213,8 @@ export function GSAPCounter({ to, suffix = "", prefix = "", className = "", dura
           scrollTrigger: { trigger: ref.current, start: "top 90%", once: true },
           onUpdate: () => {
             if (ref.current) {
-              ref.current.textContent = prefix + Math.round(obj.value).toLocaleString("en-IN") + suffix;
+              ref.current.textContent =
+                prefix + Math.round(obj.value).toLocaleString("en-IN") + suffix;
             }
           },
         });
@@ -232,5 +225,9 @@ export function GSAPCounter({ to, suffix = "", prefix = "", className = "", dura
     return () => { ctx?.revert(); };
   }, [to, duration, suffix, prefix]);
 
-  return <span ref={ref} className={className}>{prefix}0{suffix}</span>;
+  return (
+    <span ref={ref} className={className}>
+      {prefix}0{suffix}
+    </span>
+  );
 }
