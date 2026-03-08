@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
+
+// Typed bezier curves to satisfy Framer Motion v12 strict tuple type
+const EASE_OUT: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+const EASE_IN_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /**
  * Splits text into words and animates them in one-by-one on scroll.
@@ -11,7 +15,6 @@ interface SplitTextRevealProps {
   text: string;
   className?: string;
   delay?: number;
-  /** 'words' | 'chars' */
   splitBy?: "words" | "chars";
   stagger?: number;
 }
@@ -25,17 +28,12 @@ export function SplitTextReveal({
 }: SplitTextRevealProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
-
   const tokens = splitBy === "chars" ? text.split("") : text.split(" ");
 
   return (
     <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.25em] ${className}`}>
       {tokens.map((token, i) => (
-        <span
-          key={i}
-          className="overflow-hidden inline-block"
-          aria-hidden={i > 0}
-        >
+        <span key={i} className="overflow-hidden inline-block" aria-hidden={i > 0}>
           <motion.span
             className="inline-block"
             initial={{ y: "110%", opacity: 0 }}
@@ -43,11 +41,10 @@ export function SplitTextReveal({
             transition={{
               duration: 0.6,
               delay: delay + i * stagger,
-              ease: [0.22, 1, 0.36, 1],
+              ease: EASE_IN_OUT,
             }}
           >
-            {token}
-            {splitBy === "words" ? "\u00A0" : ""}
+            {token}{splitBy === "words" ? "\u00A0" : ""}
           </motion.span>
         </span>
       ))}
@@ -76,7 +73,7 @@ export function ScrollReveal({
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
 
-  const variants = {
+  const variants: Variants = {
     hidden: {
       opacity: 0,
       y: direction === "up" ? 40 : 0,
@@ -89,7 +86,7 @@ export function ScrollReveal({
       transition: {
         duration,
         delay,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: EASE_OUT,
       },
     },
   };
@@ -127,7 +124,7 @@ export function StaggerList({
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     visible: {
       transition: {
@@ -137,13 +134,13 @@ export function StaggerList({
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30, scale: 0.97 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: { duration: 0.5, ease: EASE_OUT },
     },
   };
 
@@ -166,7 +163,6 @@ export function StaggerList({
 
 /**
  * Animates a number counting up from 0 to target value on scroll.
- * Mimics anime.js number animation.
  */
 interface CountUpProps {
   to: number;
@@ -183,14 +179,10 @@ export function CountUp({ to, suffix = "", className = "", duration = 2 }: Count
   useEffect(() => {
     if (!isInView || hasAnimated.current || !ref.current) return;
     hasAnimated.current = true;
-
     const start = Date.now();
-    const end = start + duration * 1000;
 
     const frame = () => {
-      const now = Date.now();
-      const progress = Math.min((now - start) / (duration * 1000), 1);
-      // easeOutExpo
+      const progress = Math.min((Date.now() - start) / (duration * 1000), 1);
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const current = Math.round(eased * to);
       if (ref.current) ref.current.textContent = current.toLocaleString("en-IN") + suffix;
@@ -200,9 +192,5 @@ export function CountUp({ to, suffix = "", className = "", duration = 2 }: Count
     requestAnimationFrame(frame);
   }, [isInView, to, duration, suffix]);
 
-  return (
-    <span ref={ref} className={className}>
-      0{suffix}
-    </span>
-  );
+  return <span ref={ref} className={className}>0{suffix}</span>;
 }

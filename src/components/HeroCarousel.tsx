@@ -73,7 +73,7 @@ export function HeroCarousel() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
           className={`absolute inset-0 bg-gradient-to-br ${slide.bg}`}
         >
           {/* Animated canvas backgrounds layered */}
