@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 // @ts-ignore - module installed via CI
-import anime from 'animejs/lib/anime.es.js';
+import * as animejs from 'animejs';
 import { useInView } from 'framer-motion';
 
 interface AnimeTextProps {
@@ -36,14 +36,16 @@ export function AnimeTextReveal({
       
       const targets = containerRef.current.querySelectorAll('.anime-letter');
       
-      anime({
+      const defaultAnime = (animejs as any).default || animejs;
+      
+      defaultAnime({
         targets,
         translateY: [40, 0],
         translateZ: 0,
         opacity: [0, 1],
         easing: "easeOutExpo",
         duration: duration,
-        delay: anime.stagger(staggerDelay, { start: delay })
+        delay: defaultAnime.stagger(staggerDelay, { start: delay })
       });
     }
   }, [isInView, delay, duration, staggerDelay]);
