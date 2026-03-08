@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CanvasChessBg, CanvasGridBg } from "@/components/animations/CanvasEffects";
-import { HeroTypewriter } from "@/components/animations/TypewriterText";
+import Floating3DHero from "@/components/animations/Floating3DHero";
+import VantaBackground from "@/components/animations/VantaBackground";
 
 const slides = [
   {
     id: 1,
-    bg: "from-[#0f172a] to-[#1e3a5f]",
+    bg: "from-[#0f172a]/90 to-[#1e3a5f]/90",
     tag: "Official",
     tagColor: "text-amber-400 border-amber-400",
     prefix: "Andaman's",
@@ -21,7 +21,7 @@ const slides = [
   },
   {
     id: 2,
-    bg: "from-[#1a0f2e] to-[#3b1f5e]",
+    bg: "from-[#1a0f2e]/90 to-[#3b1f5e]/90",
     tag: "Upcoming",
     tagColor: "text-emerald-400 border-emerald-400",
     prefix: "Register for",
@@ -32,7 +32,7 @@ const slides = [
   },
   {
     id: 3,
-    bg: "from-[#0a1628] to-[#143d6b]",
+    bg: "from-[#0a1628]/90 to-[#143d6b]/90",
     tag: "Notice",
     tagColor: "text-orange-400 border-orange-400",
     prefix: "Upcoming",
@@ -64,7 +64,13 @@ export function HeroCarousel() {
   const slide = slides[current];
 
   return (
-    <div className="relative w-full h-[340px] md:h-[480px] lg:h-[580px] overflow-hidden group">
+    <div className="relative w-full h-[380px] md:h-[500px] lg:h-[620px] overflow-hidden group">
+      
+      {/* 3D Render layers - Persistent across slide changes */}
+      <VantaBackground effect="net" color={0x3b82f6} backgroundColor={0x050510} className="absolute inset-0 z-0">
+          <Floating3DHero />
+      </VantaBackground>
+
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
           key={current}
@@ -74,22 +80,18 @@ export function HeroCarousel() {
           animate="center"
           exit="exit"
           transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
-          className={`absolute inset-0 bg-gradient-to-br ${slide.bg}`}
+          className={`absolute inset-0 bg-gradient-to-br ${slide.bg} pointer-events-none`}
         >
-          {/* Animated canvas backgrounds layered */}
-          <CanvasGridBg className="opacity-100" />
-          <CanvasChessBg particleCount={20} color="255,255,255" />
-
           {/* Content */}
-          <div className="relative z-10 h-full flex items-center">
-            <div className="container mx-auto px-6 md:px-16">
+          <div className="relative z-10 h-full flex items-center pointer-events-auto">
+            <div className="container mx-auto px-6 md:px-16 mt-8">
               {/* Tag badge */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.4 }}
               >
-                <span className={`inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] border px-3 py-1 mb-5 ${slide.tagColor}`}>
+                <span className={`inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] border px-3 py-1 mb-5 bg-black/20 backdrop-blur-sm ${slide.tagColor}`}>
                   <span className="text-base">♟</span> {slide.tag}
                 </span>
               </motion.div>
@@ -99,13 +101,13 @@ export function HeroCarousel() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.3 }}
-                className="text-white text-3xl md:text-5xl lg:text-6xl font-black font-poppins mb-5 leading-tight"
+                className="text-white text-3xl md:text-5xl lg:text-6xl font-black font-poppins mb-5 leading-tight drop-shadow-lg"
               >
                 <HeroTypewriter
                   prefix={slide.prefix}
                   rotatingWords={slide.words}
-                  prefixClassName="text-white/90 mr-2"
-                  wordClassName="text-amber-400"
+                  prefixClassName="text-white/95 mr-2"
+                  wordClassName="text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]"
                 />
               </motion.div>
 
@@ -114,7 +116,7 @@ export function HeroCarousel() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
-                className="text-white/70 text-base md:text-lg mb-8 max-w-xl"
+                className="text-white/80 text-base md:text-lg mb-8 max-w-xl font-medium drop-shadow-md"
               >
                 {slide.subtitle}
               </motion.p>
@@ -128,7 +130,7 @@ export function HeroCarousel() {
               >
                 <Link
                   href={slide.link}
-                  className="inline-block border-2 border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-[#0f172a] font-bold uppercase tracking-widest px-7 md:px-10 py-3 text-sm transition-all duration-300"
+                  className="inline-block border-2 border-amber-400 bg-amber-400/10 backdrop-blur-sm text-amber-400 hover:bg-amber-400 hover:text-[#0f172a] font-bold uppercase tracking-widest px-7 md:px-10 py-3 text-sm transition-all duration-300 shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)]"
                 >
                   {slide.cta} →
                 </Link>

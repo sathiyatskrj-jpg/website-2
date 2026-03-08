@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 
 import { PageTransition } from "@/components/animations/PageTransition";
 
+import { ScrollAnimationWebGL } from "@/components/animations/ScrollAnimationWebGL";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,6 +42,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div id="main-content" className="flex flex-col min-h-screen relative">
+            <ScrollAnimationWebGL />
             <Header />
             <main className="flex-1 w-full flex flex-col items-center">
               <PageTransition>
