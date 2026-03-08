@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { NewsTicker } from "@/components/NewsTicker";
 import { HeroCarousel } from "@/components/HeroCarousel";

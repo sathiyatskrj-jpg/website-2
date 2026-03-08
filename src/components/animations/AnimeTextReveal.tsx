@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 // @ts-ignore - module installed via CI
 import * as animejs from 'animejs';
-import { useInView } from 'framer-motion';
 
 interface AnimeTextProps {
   text: string;
@@ -21,8 +20,27 @@ export function AnimeTextReveal({
   staggerDelay = 30
 }: AnimeTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-10%" });
   const hasAnimated = useRef(false);
+  const [isInView, setIsInView] = useState(false);
+
+  // Use native IntersectionObserver — avoids framer-motion server-side crash
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "-10% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Split text into words and letters for animation
   const words = text.split(" ").map(word => ({
