@@ -1,164 +1,141 @@
-"use client";
-
 import Link from "next/link";
-import { Download, Users, MapPin, IndianRupee, Trophy, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { Download, Users, MapPin, IndianRupee, Trophy, Calendar, ChevronRight } from "lucide-react";
+
+const tournaments = [
+  {
+    id: "1",
+    name: "3rd A&N State Chess Championship 2026",
+    date: "15–18 May 2026",
+    venue: "Port Blair Stadium Hall",
+    prizeFund: "1,50,000",
+    entryFee: "1,000",
+    status: "Upcoming",
+    categories: "Open, Under-19",
+    organizer: "ANCA",
+  },
+  {
+    id: "2",
+    name: "Nicobar District Rapid Tournament 2026",
+    date: "02 June 2026",
+    venue: "Car Nicobar Community Hall",
+    prizeFund: "25,000",
+    entryFee: "300",
+    status: "Upcoming",
+    categories: "Open",
+    organizer: "Nicobar DCA",
+  },
+  {
+    id: "3",
+    name: "Island Summer Rapid & Blitz 2026",
+    date: "20 April 2026",
+    venue: "ANCA Headquarters",
+    prizeFund: "50,000",
+    entryFee: "500",
+    status: "Completed",
+    categories: "Rapid & Blitz Open",
+    organizer: "ANCA",
+  },
+];
+
+const STATUS_STYLES: Record<string, string> = {
+  Upcoming: "bg-green-100 text-green-800 border border-green-200",
+  Ongoing: "bg-blue-100 text-blue-800 border border-blue-200",
+  Completed: "bg-gray-100 text-gray-600 border border-gray-200",
+};
 
 export default function TournamentsPage() {
-  const tournaments = [
-    {
-      id: "1",
-      name: "3rd A&N State Chess Championship 2026",
-      date: "15-18 May 2026",
-      venue: "Port Blair Stadium Hall",
-      prizeFund: "1,50,000",
-      entryFee: "1000",
-      status: "Upcoming",
-      categories: "Open, U-19",
-    },
-    {
-      id: "2",
-      name: "Nicobar District Rapid Tournament",
-      date: "02 Jun 2026",
-      venue: "Car Nicobar Hall",
-      prizeFund: "25,000",
-      entryFee: "300",
-      status: "Upcoming",
-      categories: "Open",
-    },
-    {
-      id: "3",
-      name: "Island Summer Rapid & Blitz 2026",
-      date: "20 Apr 2026",
-      venue: "ANCA Headquarters",
-      prizeFund: "50,000",
-      entryFee: "500",
-      status: "Completed",
-      categories: "Rapid & Blitz Open",
-    }
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <section className="bg-primary text-primary-foreground py-16 bg-chess-pattern relative">
-        <div className="absolute inset-0 bg-primary/95"></div>
-        <div className="container relative mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, type: "spring" }}
-          >
-            <Trophy className="h-12 w-12 text-secondary mx-auto mb-4" />
-          </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black font-poppins mb-4"
-          >
-            Tournaments
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-primary-foreground/80 max-w-2xl mx-auto"
-          >
-            Register for upcoming chess championships, view tournament brochures, and check details of ongoing state and district level events.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Filters (Mock UI) */}
-      <section className="bg-card border-b border-border sticky top-16 z-40 shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex flex-wrap gap-4">
-          <button className="px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm transition-colors">All Tournaments</button>
-          <button className="px-5 py-2 rounded-full bg-muted text-muted-foreground font-medium text-sm hover:bg-secondary/10 hover:text-secondary transition-colors">Upcoming</button>
-          <button className="px-5 py-2 rounded-full bg-muted text-muted-foreground font-medium text-sm hover:bg-secondary/10 hover:text-secondary transition-colors">Ongoing</button>
-          <button className="px-5 py-2 rounded-full bg-muted text-muted-foreground font-medium text-sm hover:bg-secondary/10 hover:text-secondary transition-colors">Completed</button>
-        </div>
-      </section>
-
-      {/* Tournament List */}
-      <section className="py-12 bg-background flex-1">
+    <div className="flex flex-col w-full">
+      {/* Page Banner */}
+      <section className="bg-primary text-primary-foreground py-8 border-b-4 border-secondary">
         <div className="container mx-auto px-4">
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.15 } },
-              hidden: {}
-            }}
-            className="space-y-6 max-w-5xl mx-auto"
-          >
-            {tournaments.map((tournament) => (
-              <motion.div 
-                key={tournament.id} 
-                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                className="bg-card border border-border rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col md:flex-row"
-              >
-                {/* Left details */}
-                <div className="p-6 md:p-8 flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wide
-                      ${tournament.status === 'Upcoming' ? 'bg-secondary/20 text-secondary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                        {tournament.status}
-                    </span>
-                    <span className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                      <Users className="h-4 w-4" /> {tournament.categories}
-                    </span>
-                  </div>
-                  <h2 className="text-2xl font-bold font-poppins mb-4 text-foreground group-hover:text-primary transition-colors">{tournament.name}</h2>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground mb-6">
-                    <div className="flex items-start gap-2">
-                       <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-secondary" />
-                       <span><strong>Date:</strong> {tournament.date}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                       <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-secondary" />
-                       <span><strong>Venue:</strong> {tournament.venue}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                       <IndianRupee className="h-4 w-4 shrink-0 mt-0.5 text-secondary" />
-                       <span><strong>Prize:</strong> ₹{tournament.prizeFund}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                       <IndianRupee className="h-4 w-4 shrink-0 mt-0.5 text-secondary" />
-                       <span><strong>Entry Fee:</strong> ₹{tournament.entryFee}</span>
-                    </div>
-                  </div>
-                </div>
+          <div className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-3">
+            <Link href="/">Home</Link>
+            <ChevronRight className="h-4 w-4" /><span>Tournaments</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black font-poppins uppercase tracking-wide flex items-center gap-3">
+            <Trophy className="h-8 w-8 text-secondary" /> Tournament Calendar
+          </h1>
+          <p className="text-primary-foreground/80 mt-2">Upcoming &amp; completed chess events organized by ANCA</p>
+        </div>
+      </section>
 
-                {/* Right actions */}
-                <div className="bg-muted p-6 md:p-8 flex flex-col justify-center gap-4 md:w-64 border-t md:border-t-0 md:border-l border-border relative overflow-hidden group">
-                  {/* Subtle background glow on hover */}
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  
-                  {tournament.status === 'Upcoming' ? (
-                    <div className="relative z-10 space-y-4 w-full">
-                      <Link href={`/tournaments/${tournament.id}/register`} className="w-full block py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 hover:scale-[1.02] transition-all text-center shadow-sm">
-                        Register Offline/Online
-                      </Link>
-                      <button className="w-full py-3 bg-background border border-border hover:border-primary text-foreground font-medium rounded-lg transition-colors flex items-center justify-center gap-2 hover:bg-muted/50">
-                        <Download className="h-4 w-4" /> Brochure
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative z-10 space-y-4 w-full">
-                      <button className="w-full py-3 bg-background border border-border text-muted-foreground font-medium rounded-lg cursor-not-allowed">
-                        Registration Closed
-                      </button>
-                      <button className="w-full py-3 bg-secondary/10 text-secondary font-medium rounded-lg transition-colors hover:bg-secondary/20 hover:scale-[1.02]">
-                        View Results
-                      </button>
-                    </div>
-                  )}
+      {/* Status Filter Bar */}
+      <div className="bg-card border-b border-border shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex flex-wrap gap-2">
+          {["All", "Upcoming", "Ongoing", "Completed"].map((f) => (
+            <button key={f} className={`text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-sm border transition-all ${f === "All" ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground border-border hover:border-primary hover:text-primary"}`}>
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tournament Table */}
+      <section className="py-10 container mx-auto px-4">
+        <div className="bg-card border border-border shadow-sm rounded-md overflow-hidden">
+          {/* Table Header */}
+          <div className="hidden md:grid grid-cols-12 bg-primary text-primary-foreground text-xs uppercase tracking-widest font-bold py-3 px-6 gap-4">
+            <div className="col-span-5">Tournament Name</div>
+            <div className="col-span-2">Dates</div>
+            <div className="col-span-2">Venue / Organizer</div>
+            <div className="col-span-1">Status</div>
+            <div className="col-span-2 text-right">Action</div>
+          </div>
+
+          {/* Tournament Rows */}
+          {tournaments.map((t, idx) => (
+            <div key={t.id} className={`grid md:grid-cols-12 gap-4 px-6 py-5 border-b border-border last:border-0 hover:bg-muted/50 transition-colors ${idx % 2 === 0 ? "bg-background" : "bg-muted/20"}`}>
+              <div className="md:col-span-5">
+                <div className="flex items-center gap-2 mb-1 md:hidden">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded-sm uppercase ${STATUS_STYLES[t.status]}`}>{t.status}</span>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                <h2 className="font-bold text-foreground text-sm md:text-base">{t.name}</h2>
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><Users className="h-3 w-3" />{t.categories}</span>
+                  <span className="flex items-center gap-1"><IndianRupee className="h-3 w-3" />Prize: ₹{t.prizeFund}</span>
+                </div>
+              </div>
+              <div className="md:col-span-2 flex items-center">
+                <div className="flex items-start gap-1 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4 shrink-0 mt-0.5 text-secondary" />
+                  <span>{t.date}</span>
+                </div>
+              </div>
+              <div className="md:col-span-2 flex items-center">
+                <div className="text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1"><MapPin className="h-4 w-4 text-secondary" />{t.venue}</div>
+                  <div className="text-xs mt-1 pl-5">{t.organizer}</div>
+                </div>
+              </div>
+              <div className="md:col-span-1 hidden md:flex items-center">
+                <span className={`px-2 py-0.5 text-xs font-bold rounded-sm uppercase ${STATUS_STYLES[t.status]}`}>{t.status}</span>
+              </div>
+              <div className="md:col-span-2 flex items-center justify-end gap-2">
+                {t.status !== "Completed" ? (
+                  <>
+                    <Link href={`/tournaments/${t.id}/register`} className="text-xs bg-secondary text-secondary-foreground px-3 py-2 rounded font-bold uppercase tracking-wider hover:bg-secondary/90 transition-colors">
+                      Register
+                    </Link>
+                    <button className="text-xs border border-border text-muted-foreground px-3 py-2 rounded hover:border-primary hover:text-primary flex items-center gap-1 transition-colors">
+                      <Download className="h-3 w-3" /> Brochure
+                    </button>
+                  </>
+                ) : (
+                  <button className="text-xs bg-muted border border-border text-muted-foreground px-3 py-2 rounded font-bold uppercase tracking-wider hover:bg-primary hover:text-white transition-colors">
+                    Results
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Important Notice */}
+        <div className="mt-8 bg-muted border border-border rounded-md p-5">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            <strong className="text-foreground">Important:</strong> Players are advised to register well before the deadline. Entry fees are non-refundable. All participants must carry a valid photo ID proof. For queries, contact the ANCA Secretariat at <a href="mailto:info@ancachess.in" className="text-primary hover:underline">info@ancachess.in</a>.
+          </p>
         </div>
       </section>
     </div>

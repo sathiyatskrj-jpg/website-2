@@ -1,105 +1,113 @@
-"use client";
+import Link from "next/link";
+import { Search, Trophy, Medal, Users, ChevronRight } from "lucide-react";
 
-import { Search, Trophy, Medal } from "lucide-react";
-import { motion } from "framer-motion";
+const players = [
+  { id: 1, name: "A. Rajesh Kumar", title: "FM", rating: 2245, aicfId: "AN-001", district: "South Andaman", rank: 1 },
+  { id: 2, name: "K. Priya Devi", title: "WCM", rating: 1908, aicfId: "AN-002", district: "South Andaman", rank: 2 },
+  { id: 3, name: "M. Rajan", title: "CM", rating: 2055, aicfId: "AN-003", district: "North Andaman", rank: 3 },
+  { id: 4, name: "S. Island Champ", title: "", rating: 1780, aicfId: "AN-004", district: "Nicobar", rank: 4 },
+  { id: 5, name: "D. Port Blair", title: "", rating: 1650, aicfId: "AN-005", district: "South Andaman", rank: 5 },
+  { id: 6, name: "P. Nicobar Star", title: "", rating: 1540, aicfId: "AN-006", district: "Nicobar", rank: 6 },
+];
+
+const TITLE_COLORS: Record<string, string> = {
+  GM: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+  FM: "bg-blue-100 text-blue-800 border border-blue-200",
+  CM: "bg-purple-100 text-purple-800 border border-purple-200",
+  WCM: "bg-pink-100 text-pink-800 border border-pink-200",
+  "": "bg-gray-100 text-gray-600 border border-gray-200",
+};
 
 export default function PlayersPage() {
-  const players = [
-    { id: 1, name: "Viswanathan Anand", title: "GM", rating: 2750, aicfId: "12345", profile: "https://ui-avatars.com/api/?name=VA&background=random" },
-    { id: 2, name: "Rameshbabu Praggnanandhaa", title: "GM", rating: 2747, aicfId: "54321", profile: "https://ui-avatars.com/api/?name=RP&background=random" },
-    { id: 3, name: "Harika Dronavalli", title: "GM", rating: 2500, aicfId: "98765", profile: "https://ui-avatars.com/api/?name=HD&background=random" },
-    { id: 4, name: "Nihal Sarin", title: "GM", rating: 2680, aicfId: "45678", profile: "https://ui-avatars.com/api/?name=NS&background=random" },
-    // Mock Andaman players
-    { id: 5, name: "Andaman Challenger", title: "FM", rating: 2200, aicfId: "AN-001", profile: "https://ui-avatars.com/api/?name=AC&background=random" },
-    { id: 6, name: "Island Master", title: "CM", rating: 2050, aicfId: "AN-002", profile: "https://ui-avatars.com/api/?name=IM&background=random" },
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="bg-primary text-primary-foreground py-16 bg-chess-pattern relative">
-        <div className="absolute inset-0 bg-primary/95"></div>
-        <div className="container relative mx-auto px-4 text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl md:text-5xl font-black font-poppins mb-4"
-          >
-            Player Directory
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg text-primary-foreground/80 max-w-2xl mx-auto"
-          >
-            Search and view profiles, FIDE ratings, and achievements of registered chess players in the Andaman & Nicobar Islands.
-          </motion.p>
+    <div className="flex flex-col w-full">
+      <section className="bg-primary text-primary-foreground py-8 border-b-4 border-secondary">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-3">
+            <Link href="/">Home</Link><ChevronRight className="h-4 w-4" /><span>Player Directory</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black font-poppins uppercase tracking-wide flex items-center gap-3">
+            <Users className="h-8 w-8 text-secondary" /> Player Directory
+          </h1>
+          <p className="text-primary-foreground/80 mt-2">Search FIDE-rated and AICF-registered players from A&N Islands</p>
         </div>
       </section>
 
-      <section className="py-12 bg-background flex-1">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Search Bar */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="bg-card border border-border rounded-xl p-4 flex flex-col sm:flex-row items-center gap-3 mb-8 shadow-sm"
-          >
-            <Search className="text-muted-foreground h-5 w-5 ml-2 hidden sm:block" />
-            <input 
-              type="text" 
-              placeholder="Search by Name, AICF ID, or Title..." 
-              className="flex-1 w-full bg-transparent border border-border sm:border-none rounded-lg px-4 py-3 outline-none text-foreground placeholder:text-muted-foreground font-medium focus:ring-2 focus:ring-primary sm:focus:ring-0 transition-shadow"
-            />
-            <button className="w-full sm:w-auto bg-secondary text-secondary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors shadow-sm">
-              Search
-            </button>
-          </motion.div>
+      {/* Search Inputs */}
+      <div className="bg-card border-b border-border shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input type="text" placeholder="Search by name or AICF ID..." className="w-full pl-10 pr-4 py-2 border border-border rounded bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+            <select className="border border-border rounded py-2 px-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+              <option>All Districts</option>
+              <option>South Andaman</option>
+              <option>North &amp; Middle Andaman</option>
+              <option>Nicobar</option>
+            </select>
+            <select className="border border-border rounded py-2 px-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary">
+              <option>All Titles</option>
+              <option>GM</option><option>IM</option><option>FM</option><option>CM</option><option>WGM</option><option>WIM</option><option>WFM</option><option>WCM</option>
+            </select>
+            <button className="bg-primary text-primary-foreground px-6 py-2 rounded text-sm font-bold uppercase tracking-wider hover:bg-primary/90 transition-colors">Search</button>
+          </div>
+        </div>
+      </div>
 
-          {/* Players Grid */}
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.1 } },
-              hidden: {}
-            }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {players.map(player => (
-              <motion.div 
-                key={player.id} 
-                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-card border border-border rounded-xl p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-              >
-                <div className="flex items-start gap-4 mb-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={player.profile} alt={player.name} className="h-16 w-16 rounded-full border-2 border-primary/10 group-hover:border-secondary transition-colors" />
-                  <div>
-                    <h3 className="font-bold font-poppins text-lg text-foreground line-clamp-1">{player.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-0.5 rounded uppercase">{player.title}</span>
-                      <span className="text-sm font-medium text-muted-foreground">AICF: {player.aicfId}</span>
-                    </div>
-                  </div>
+      <section className="py-10 container mx-auto px-4">
+        <div className="bg-card border border-border shadow-sm rounded-md overflow-hidden">
+          {/* Table Header */}
+          <div className="hidden md:grid grid-cols-12 bg-primary text-primary-foreground text-xs uppercase tracking-widest font-bold py-3 px-6">
+            <div className="col-span-1">#</div>
+            <div className="col-span-4">Player Name</div>
+            <div className="col-span-1 text-center">Title</div>
+            <div className="col-span-2 text-center">FIDE Rating</div>
+            <div className="col-span-2">AICF ID</div>
+            <div className="col-span-2">District</div>
+          </div>
+
+          {players.map((p, idx) => (
+            <div key={p.id} className={`grid md:grid-cols-12 gap-4 px-6 py-4 border-b border-border last:border-0 hover:bg-muted/50 transition-colors items-center ${idx % 2 === 0 ? "" : "bg-muted/20"}`}>
+              {/* Mobile view combines */}
+              <div className="md:hidden flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-foreground">{p.name}</div>
+                  <div className="text-xs text-muted-foreground">{p.aicfId} · {p.district}</div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
-                  <div className="bg-muted rounded-lg p-3 text-center">
-                    <p className="text-xs text-muted-foreground font-medium uppercase mb-1 flex items-center justify-center gap-1"><Trophy className="h-3 w-3" /> FIDE</p>
-                    <p className="font-bold font-poppins text-foreground">{player.rating}</p>
-                  </div>
-                  <div className="bg-muted rounded-lg p-3 text-center">
-                    <p className="text-xs text-muted-foreground font-medium uppercase mb-1 flex items-center justify-center gap-1"><Medal className="h-3 w-3" /> State Rank</p>
-                    <p className="font-bold font-poppins text-foreground">#{player.id}</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  {p.title && <span className={`px-2 py-0.5 text-xs font-bold rounded-sm uppercase ${TITLE_COLORS[p.title]}`}>{p.title}</span>}
+                  <span className="font-bold text-foreground">{p.rating}</span>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              </div>
+
+              {/* Desktop */}
+              <div className="hidden md:block md:col-span-1 text-muted-foreground font-semibold text-sm">{p.rank}</div>
+              <div className="hidden md:block md:col-span-4">
+                <Link href={`/players/${p.id}`} className="font-bold text-foreground hover:text-primary transition-colors">{p.name}</Link>
+              </div>
+              <div className="hidden md:flex md:col-span-1 justify-center">
+                {p.title ? (
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded-sm uppercase ${TITLE_COLORS[p.title]}`}>{p.title}</span>
+                ) : <span className="text-muted-foreground text-xs">—</span>}
+              </div>
+              <div className="hidden md:flex md:col-span-2 items-center justify-center gap-1">
+                <Trophy className="h-4 w-4 text-secondary" />
+                <span className="font-bold text-foreground">{p.rating}</span>
+              </div>
+              <div className="hidden md:block md:col-span-2 text-sm text-muted-foreground">{p.aicfId}</div>
+              <div className="hidden md:block md:col-span-2 text-sm text-muted-foreground">{p.district}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex justify-between items-center text-sm text-muted-foreground">
+          <span>Showing 6 of 1,200+ registered players</span>
+          <div className="flex gap-2">
+            <button className="border border-border px-4 py-1.5 rounded text-xs hover:border-primary hover:text-primary">← Previous</button>
+            <button className="border border-primary bg-primary text-primary-foreground px-4 py-1.5 rounded text-xs">Next →</button>
+          </div>
         </div>
       </section>
     </div>
